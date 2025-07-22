@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04  # 已更改为 ubuntu-22.04
 
     steps:
       - name: 检出代码
@@ -52,11 +52,17 @@ jobs:
           cp backend/x-ui-backend release/
           cp -r web/dist release/web-dist
 
+      # 注意：softprops/action-gh-release@v2 默认会上传所有在指定路径下的文件。
+      # 如果您只想上传特定的文件，可以这样配置：
       - name: 创建 Release 并上传资源
         uses: softprops/action-gh-release@v2
         with:
           files: |
             xtrafficdash
             dist.zip
+            # 如果 web/dist 目录已经打包成 dist.zip，则不需要再次上传 dist.zip
+            # 如果您想上传打包后的 release 目录内的所有文件，可以使用通配符
+            release/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
